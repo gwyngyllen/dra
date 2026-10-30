@@ -1,0 +1,27 @@
+name: MSYS2 MINGW64 Interactive Shell
+on:
+  workflow_dispatch:  # 支持网页手动点击启动，不需要push代码
+
+jobs:
+  debug-shell:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}  # 默认shell直接绑定MSYS2
+    steps:
+      - name: Setup MSYS2 (MINGW64)
+        id: msys2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-make
+            mingw-w64-x86_64-cmake
+            git
+
+      - name: Start Tmate interactive session
+        uses: mxschmitt/action-tmate@v3
+        with:
+          msys2-location: ${{ steps.msys2.outputs.msys2-path }}
